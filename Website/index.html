@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-section h2 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 5px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        #assignmentsList {
+            margin: 20px 0;
+        }
+
+        .assignment-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .assignment-name {
+            font-weight: 600;
+            color: #333;
+            flex: 1;
+        }
+
+        .assignment-percent {
+            color: #667eea;
+            font-weight: 600;
+            margin: 0 15px;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .assignment-type {
+            color: #999;
+            font-size: 12px;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .remove-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .remove-btn:hover {
+            background: #ff5252;
+        }
+
+        .results-section {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .results-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .category-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .category-name {
+            color: #555;
+            font-weight: 500;
+        }
+
+        .category-avg {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .no-entries {
+            color: #999;
+            font-style: italic;
+        }
+
+        .overall-grade {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            text-align: center;
+            border: 2px solid #667eea;
+        }
+
+        .overall-grade-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .overall-grade-value {
+            color: #667eea;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .grade-letter {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Grade Calculator</h1>
+        <p class="subtitle">Track and calculate your weighted grades</p>
+
+        <!-- Input Form Section -->
+        <div class="form-section">
+            <h2>Add Assignment</h2>
+
+            <div class="form-group">
+                <label for="assignmentName">Assignment Name</label>
+                <input type="text" id="assignmentName" placeholder="e.g., Quiz 1, Midterm, Project">
+            </div>
+
+            <div class="form-group">
+                <label for="assignmentType">Assignment Type</label>
+                <select id="assignmentType">
+                    <option value="">-- Select Type --</option>
+                    <option value="graded formative">Graded Formative (10%)</option>
+                    <option value="major summative">Major Summative (60%)</option>
+                    <option value="minor summative">Minor Summative (30%)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="gradeEarned">Grade Earned (Points)</label>
+                <input type="number" id="gradeEarned" placeholder="e.g., 85" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="pointsPossible">Points Possible</label>
+                <input type="number" id="pointsPossible" placeholder="e.g., 100" step="0.01">
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <button onclick="addAssignment()">Add Assignment</button>
+        </div>
+
+        <!-- Assignments List -->
+        <div id="assignmentsList"></div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section">
+            <h3>Category Averages</h3>
+            <div id="categoryResults"></div>
+
+            <div class="overall-grade">
+                <div class="overall-grade-label">Overall Grade</div>
+                <div class="overall-grade-value" id="overallGradeValue">--</div>
+                <div class="grade-letter" id="gradeLetter"></div>
+            </div>
+
+            <button class="btn-secondary" onclick="resetCalculator()">Start Over</button>
+        </div>
+    </div>
+
+    <script>
+        const WEIGHTS = {
+            "graded formative": 0.10,
+            "major summative": 0.60,
+            "minor summative": 0.30
+        };
+
+        let assignments = [];
+
+        function addAssignment() {
+            const name = document.getElementById('assignmentName').value.trim();
+            const type = document.getElementById('assignmentType').value;
+            const earned = parseFloat(document.getElementById('gradeEarned').value);
+            const total = parseFloat(document.getElementById('pointsPossible').value);
+            const errorDiv = document.getElementById('errorMessage');
+
+            errorDiv.textContent = '';
+
+            if (!name) {
+                errorDiv.textContent = 'Please enter an assignment name.';
+                return;
+            }
+
+            if (!type) {
+                errorDiv.textContent = 'Please select an assignment type.';
+                return;
+            }
+
+            if (isNaN(earned) || isNaN(total)) {
+                errorDiv.textContent = 'Please enter numeric values for grade and points.';
+                return;
+            }
+
+            if (total <= 0) {
+                errorDiv.textContent = 'Points possible must be greater than zero.';
+                return;
+            }
+
+            const percentage = (earned / total) * 100;
+
+            assignments.push({
+                id: Date.now(),
+                name,
+                type,
+                percentage: percentage.toFixed(2),
+                earned,
+                total
+            });
+
+            clearForm();
+            displayAssignments();
+            calculateGrades();
+        }
+
+        function clearForm() {
+            document.getElementById('assignmentName').value = '';
+            document.getElementById('assignmentType').value = '';
+            document.getElementById('gradeEarned').value = '';
+            document.getElementById('pointsPossible').value = '';
+            document.getElementById('errorMessage').textContent = '';
+        }
+
+        function removeAssignment(id) {
+            assignments = assignments.filter(a => a.id !== id);
+            displayAssignments();
+            calculateGrades();
+        }
+
+        function displayAssignments() {
+            const container = document.getElementById('assignmentsList');
+
+            if (assignments.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = assignments
+                .map(assignment => `
+                    <div class="assignment-item">
+                        <div class="assignment-name">${assignment.name}</div>
+                        <div class="assignment-percent">${assignment.percentage}%</div>
+                        <div class="assignment-type">${assignment.type}</div>
+                        <button class="remove-btn" onclick="removeAssignment(${assignment.id})">Remove</button>
+                    </div>
+                `)
+                .join('');
+        }
+
+        function calculateGrades() {
+            if (assignments.length === 0) {
+                document.getElementById('resultsSection').classList.remove('show');
+                return;
+            }
+
+            const categoryPercentages = {
+                "graded formative": [],
+                "major summative": [],
+                "minor summative": []
+            };
+
+            assignments.forEach(a => {
+                categoryPercentages[a.type].push(parseFloat(a.percentage));
+            });
+
+            let overallGrade = 0;
+            let categoryResults = '';
+
+            Object.keys(WEIGHTS).forEach(category => {
+                const scores = categoryPercentages[category];
+
+                if (scores.length > 0) {
+                    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+                    const weighted = avg * WEIGHTS[category];
+                    overallGrade += weighted;
+
+                    categoryResults += `
+                        <div class="category-result">
+                            <div class="category-name">${categoryToDisplay(category)}</div>
+                            <div class="category-avg">${avg.toFixed(2)}% → ${weighted.toFixed(2)}%</div>
+                        </div>
+                    `;
+                } else {
+                    categoryResults += `
+                        <div class="category-result">
+                            <div class="category-name">${categoryToDisplay(category)}</div>
+                            <div class="no-entries">No entries</div>
+                        </div>
+                    `;
+                }
+            });
+
+            document.getElementById('categoryResults').innerHTML = categoryResults;
+            document.getElementById('overallGradeValue').textContent = overallGrade.toFixed(2) + '%';
+            document.getElementById('gradeLetter').textContent = `Grade: ${getLetterGrade(overallGrade)}`;
+
+            document.getElementById('resultsSection').classList.add('show');
+        }
+
+        function categoryToDisplay(category) {
+            return category.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        function getLetterGrade(percentage) {
+            if (percentage >= 90) return 'A';
+            if (percentage >= 80) return 'B';
+            if (percentage >= 70) return 'C';
+            if (percentage >= 60) return 'D';
+            return 'F';
+        }
+
+        function resetCalculator() {
+            assignments = [];
+            clearForm();
+            displayAssignments();
+            document.getElementById('resultsSection').classList.remove('show');
+        }
+
+        document.getElementById('assignmentName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addAssignment();
+        });
+    </script>
+</body>
+</html>
