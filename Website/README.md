@@ -27,7 +27,6 @@ Website/
 ├── index.html          # Main HTML file
 ├── styles.css          # CSS styling
 ├── script.js           # JavaScript functionality
-├── data.js             # Grade calculator data and logic
 └── README.md           # This file
 ```
 
